@@ -34,7 +34,11 @@ jobs:
           node-version: ${{ matrix.node-js_version }}
 
       - name: install dep
-        run: npm install
+        run: |
+          npm uninstall chai
+          npm install chai@4.3.7
+          npm install
 
       - name: unit testing
         run: npm test
+
