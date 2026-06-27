@@ -6,10 +6,9 @@ on:
       - 'feature/**'
 
 env:
-  MONGO_URI: ${{ secrets.MONGO_URI }}
-  MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
-  MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
-
+  MONGO_URI: "mongodb+srv://testuser:TestPassword123@supercluster.d83jj.mongodb.net/superdata"
+  MONGO_USERNAME: "superuser"
+  MONGO_PASSWORD: "SuperPassword"
 jobs:
   unit-testing:
     name: Unit Testing
@@ -37,17 +36,7 @@ jobs:
 
       - name: unit testing
         id: hamada
-        run: |
-          echo "MONGO_URI=${{ secrets.MONGO_URI }}" > .env
-          echo "MONGO_URL=${{ secrets.MONGO_URI }}" >> .env
-          echo "DB_CONN=${{ secrets.MONGO_URI }}" >> .env
-          echo "DATABASE_URL=${{ secrets.MONGO_URI }}" >> .env
-          npm test
-        env:
-          MONGO_URI: ${{ secrets.MONGO_URI }}
-          MONGO_URL: ${{ secrets.MONGO_URI }}
-          DB_CONN: ${{ secrets.MONGO_URI }}
-          DATABASE_URL: ${{ secrets.MONGO_URI }}
+        run: npm test
 
       - name: archive test result
         if: steps.hamada.outcome == 'failure' || steps.hamada.outcome == 'success'
