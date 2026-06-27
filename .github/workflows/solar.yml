@@ -1,14 +1,12 @@
-name: solar-new system workflow
-
 on:
   workflow_dispatch:
   push:
     branches:
       - main
-      - 'feature/*'
+      - 'feature/**'
 
 env:
-  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superData'
+  MONGO_URI: 'mongodb+srv://supercluster.d83jj.mongodb.net/superdata'
   MONGO_USERNAME: ${{ vars.MONGO_USERNAME }}
   MONGO_PASSWORD: ${{ secrets.MONGO_PASSWORD }}
 
@@ -17,28 +15,33 @@ jobs:
     name: Unit Testing
     strategy:
       matrix:
-        node-js_version: [18, 19, 20]
+        nodejs_version: [18, 19, 20]
         os: [ubuntu-latest, macos-latest]
         exclude:
-          - node-js_version: 18
+          - nodejs_version: 18
             os: macos-latest
+
     runs-on: ${{ matrix.os }}
 
     steps:
       - name: checkout repo
         uses: actions/checkout@v4
 
-      - name: Setup NodeJs version - ${{ matrix.node-js_version }}
+      - name: Setup NodeJS version - ${{ matrix.nodejs_version }}
         uses: actions/setup-node@v3
         with:
-          node-version: ${{ matrix.node-js_version }}
+          node-version: ${{ matrix.nodejs_version }}
 
       - name: install dep
-        run: |
-          npm uninstall chai
-          npm install chai@4.3.7
-          npm install
+        run: npm install
 
       - name: unit testing
+        id: hamada
         run: npm test
 
+      - name: archive test result
+        if: steps.hamada.outcome == 'failure' || steps.hamada.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: Mocha-Test-Result
+          path: test-results.xml
