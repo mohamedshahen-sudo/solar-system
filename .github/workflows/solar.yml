@@ -43,5 +43,5 @@ jobs:
         if: steps.hamada.outcome == 'failure' || steps.hamada.outcome == 'success'
         uses: actions/upload-artifact@v4
         with:
-          name: Mocha-Test-Result
+          name: Mocha-Test-Result-${{ matrix.os }}-${{ matrix.nodejs_version }}
           path: test-results.xml
