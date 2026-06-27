@@ -1,5 +1,4 @@
-require('dotenv').config();
-const path = require('path');
+require('dotenv').config({ path: '/dev/null' });const path = require('path');
 const express = require('express');
 const OS = require('os');
 const bodyParser = require('body-parser');
