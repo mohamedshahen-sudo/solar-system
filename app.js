@@ -1,11 +1,14 @@
-require('dotenv').config({ path: '/dev/null' });const path = require('path');
-const express = require('express');
+
+require('dotenv').config({ path: '/dev/null' }); 
+
+const express = require('express'); 
+const path = require('path'); 
 const OS = require('os');
 const bodyParser = require('body-parser');
 const mongoose = require("mongoose");
-const app = express();
-const cors = require('cors')
+const cors = require('cors');
 
+const app = express();
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
