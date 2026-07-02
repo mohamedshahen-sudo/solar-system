@@ -1,5 +1,4 @@
-
-require('dotenv').config({ path: '/dev/null' }); 
+require('dotenv').config(); 
 
 const express = require('express'); 
 const path = require('path'); 
@@ -12,20 +11,24 @@ const app = express();
 
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/')));
-app.use(cors())
+app.use(cors());
 
-mongoose.connect(process.env.MONGO_URI, {
-    user: process.env.MONGO_USERNAME,
-    pass: process.env.MONGO_PASSWORD,
+const dbURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/solar_system";
+const dbUser = process.env.MONGO_USERNAME || "";
+const dbPass = process.env.MONGO_PASSWORD || "";
+
+mongoose.connect(dbURI, {
+    user: dbUser,
+    pass: dbPass,
     useNewUrlParser: true,
     useUnifiedTopology: true
 }, function(err) {
     if (err) {
-        console.log("error!! " + err)
+        console.log("error!! " + err);
     } else {
-      //  console.log("MongoDB Connection Successful")
+        console.log("MongoDB Connection Successful");
     }
-})
+});
 
 var Schema = mongoose.Schema;
 
@@ -39,52 +42,46 @@ var dataSchema = new Schema({
 });
 var planetModel = mongoose.model('planets', dataSchema);
 
-
-
-app.post('/planet',   function(req, res) {
-   // console.log("Received Planet ID " + req.body.id)
+app.post('/planet', function(req, res) {
     planetModel.findOne({
         id: req.body.id
     }, function(err, planetData) {
         if (err) {
-            alert("Ooops, We only have 9 planets and a sun. Select a number from 0 - 9")
-            res.send("Error in Planet Data")
+            res.send("Error in Planet Data");
         } else {
             res.send(planetData);
         }
-    })
-})
+    });
+});
 
-app.get('/',   async (req, res) => {
+app.get('/', async (req, res) => {
     res.sendFile(path.join(__dirname, '/', 'index.html'));
 });
 
-
-app.get('/os',   function(req, res) {
+app.get('/os', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send({
         "os": OS.hostname(),
-        "env": process.env.NODE_ENV
+        "env": process.env.NODE_ENV || "development"
     });
-})
+});
 
-app.get('/live',   function(req, res) {
+app.get('/live', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send({
         "status": "live"
     });
-})
+});
 
-app.get('/ready',   function(req, res) {
+app.get('/ready', function(req, res) {
     res.setHeader('Content-Type', 'application/json');
     res.send({
         "status": "ready"
     });
-})
+});
 
 app.listen(3000, () => {
-    console.log("Server successfully running on port - " +3000);
-})
-
+    console.log("Server successfully running on port - " + 3000);
+});
 
 module.exports = app;
